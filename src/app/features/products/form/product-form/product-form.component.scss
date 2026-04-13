@@ -1,0 +1,52 @@
+// =============================================================================
+// features/produtos/form/produto-form.component.scss
+// =============================================================================
+
+.header-acoes {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.form-section {
+  padding: 24px 0;
+}
+
+.form-section-titulo {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin: 0 0 20px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+
+  .col-1 { grid-column: span 1; }
+  .col-2 { grid-column: span 2; }
+}
+
+.full-width { width: 100%; margin-bottom: 16px; }
+
+.carregando-overlay {
+  display: flex;
+  justify-content: center;
+  padding: 48px;
+}
+
+// Ajuste do spinner dentro do botão
+mat-spinner {
+  display: inline-block;
+  margin-right: 8px;
+}

@@ -1,0 +1,33 @@
+.dialog-exclusao { padding: 8px; }
+ 
+.dialog-icone {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 16px;
+
+    mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: var(--estoque-zero, #f87171);
+    }
+}
+
+h2 {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0 0 8px;
+}
+
+p {
+    color: var(--text-secondary);
+    text-align: center;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+mat-dialog-actions {
+    gap: 8px;
+    padding: 16px 0 0;
+}

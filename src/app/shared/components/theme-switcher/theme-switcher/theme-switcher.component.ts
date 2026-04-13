@@ -9,7 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { THEMES, ThemeService } from '../core/theme.service';
+import { THEMES, ThemeService } from '../../../../core/theme.service';
 
 @Component({
   selector: 'app-theme-switcher',

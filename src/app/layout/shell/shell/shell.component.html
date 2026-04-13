@@ -1,0 +1,167 @@
+<mat-sidenav-container class="shell-container">
+  <mat-sidenav
+    #sidenav
+    [mode]="isMobile() ? 'over' : 'side'"
+    [opened]="sidenavAberta()"
+    [class.sidenav--compacta]="sidenavCompacta() && !isMobile()"
+    (closedStart)="sidenavAberta.set(false)"
+  >
+    <!-- Logo / Brand -->
+    <div class="sidenav-brand">
+      <mat-icon class="brand-icon">inventory</mat-icon>
+
+      @if (!sidenavCompacta() || isMobile()) {
+        <span class="brand-nome">
+          @if (themeService.isRoseGold()) {
+            <span class="brand-texto brand-texto--beauty">bela-estoque</span>
+          } @else {
+            <span class="brand-texto">bela-estoque</span>
+          }
+        </span>
+      }
+    </div>
+
+    <mat-divider />
+
+    <!-- Navegação principal -->
+    <nav class="sidenav-nav">
+      <mat-nav-list>
+        @for (item of navPrincipalFiltrada(); track item.route) {
+          <a
+            mat-list-item
+            [routerLink]="item.route"
+            routerLinkActive="nav-item--ativo"
+            [routerLinkActiveOptions]="{ exact: item.route === '/estoque' }"
+            (click)="fecharSidenavMobile()"
+            [matTooltip]="sidenavCompacta() ? item.label : ''"
+            matTooltipPosition="right"
+            class="nav-item"
+          >
+            <mat-icon
+              matListItemIcon
+              [matBadge]="item.badge"
+              [matBadgeHidden]="!item.badge"
+              matBadgeSize="small"
+              matBadgeColor="warn"
+            >
+              {{ item.icon }}
+            </mat-icon>
+
+            @if (!sidenavCompacta() || isMobile()) {
+              <span matListItemTitle>{{ item.label }}</span>
+            }
+          </a>
+        }
+      </mat-nav-list>
+    </nav>
+
+    <div class="sidenav-spacer"></div>
+
+    <mat-divider />
+
+    <!-- Navegação secundária -->
+    <nav class="sidenav-nav sidenav-nav--secundaria">
+      <mat-nav-list>
+        @for (item of navSecundariaFiltrada(); track item.route) {
+          <a
+            mat-list-item
+            [routerLink]="item.route"
+            routerLinkActive="nav-item--ativo"
+            (click)="fecharSidenavMobile()"
+            [matTooltip]="sidenavCompacta() ? item.label : ''"
+            matTooltipPosition="right"
+            class="nav-item"
+          >
+            <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+
+            @if (!sidenavCompacta() || isMobile()) {
+              <span matListItemTitle>{{ item.label }}</span>
+            }
+          </a>
+        }
+      </mat-nav-list>
+    </nav>
+  </mat-sidenav>
+
+  <!-- ======================================================================
+    CONTEÚDO PRINCIPAL
+  ======================================================================= -->
+  <mat-sidenav-content>
+    <!-- Toolbar -->
+    <mat-toolbar class="toolbar">
+      <!-- Botão toggle sidenav -->
+      <button
+        mat-icon-button
+        (click)="toggleSidenav()"
+        [attr.aria-label]="sidenavAberta() ? 'Fechar menu' : 'Abrir menu'"
+      >
+        <mat-icon>{{ sidenavCompacta() ? "menu_open" : "menu" }}</mat-icon>
+      </button>
+
+      <!-- Título da página atual (via router) -->
+      <span class="toolbar-titulo">bela-estoque</span>
+
+      <span class="toolbar-spacer"></span>
+
+      <!-- Ações da toolbar -->
+      <app-theme-switcher />
+
+      <!-- Menu do usuário -->
+      <button
+        mat-icon-button
+        [matMenuTriggerFor]="menuUsuario"
+        class="btn-avatar"
+        aria-label="Menu do usuário"
+      >
+        @if (avatarUsuario()) {
+          <img
+            [src]="avatarUsuario()!"
+            [alt]="nomeUsuario()"
+            class="avatar-img"
+          />
+        } @else {
+          <div class="avatar-iniciais">{{ iniciaisUsuario() }}</div>
+        }
+      </button>
+
+      <mat-menu #menuUsuario="matMenu" class="menu-usuario">
+        <!-- Info do usuário -->
+        <div class="menu-usuario-header">
+          <div class="avatar-iniciais avatar-iniciais--menu">
+            {{ iniciaisUsuario() }}
+          </div>
+          <div>
+            <p class="menu-nome">{{ nomeUsuario() }}</p>
+            <p class="menu-role">{{ userRole() }}</p>
+          </div>
+        </div>
+
+        <mat-divider />
+
+        <button mat-menu-item routerLink="/perfil">
+          <mat-icon>person</mat-icon>
+          <span>Meu perfil</span>
+        </button>
+
+        @if (isAdmin()) {
+          <button mat-menu-item routerLink="/configuracoes">
+            <mat-icon>settings</mat-icon>
+            <span>Configurações</span>
+          </button>
+        }
+
+        <mat-divider />
+
+        <button mat-menu-item (click)="logout()" class="btn-logout">
+          <mat-icon>logout</mat-icon>
+          <span>Sair</span>
+        </button>
+      </mat-menu>
+    </mat-toolbar>
+
+    <!-- Conteúdo das rotas filhas -->
+    <main class="conteudo-principal">
+      <router-outlet />
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

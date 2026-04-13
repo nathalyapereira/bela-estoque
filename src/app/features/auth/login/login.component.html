@@ -1,1 +1,81 @@
-<p>login works!</p>
+<div class="login-container">
+  <mat-card class="login-card">
+    <div class="login-header">
+      <mat-icon class="logo">lock_outline</mat-icon>
+      <h1>Bem-vindo</h1>
+      <p>Faça login para acessar</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email</mat-label>
+        <input
+          matInput
+          formControlName="email"
+          type="email"
+          placeholder="seu@email.com"
+          autocomplete="email"
+        />
+        <mat-icon matPrefix>alternate_email</mat-icon>
+        @if (loginForm.get("email")?.hasError("required")) {
+          <mat-error>Informe seu email</mat-error>
+        }
+        @if (loginForm.get("email")?.hasError("email")) {
+          <mat-error>Formato de email inválido</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Senha</mat-label>
+        <input
+          matInput
+          formControlName="password"
+          [type]="hidePassword() ? 'password' : 'text'"
+          placeholder="Sua senha"
+          autocomplete="current-password"
+        />
+        <mat-icon matPrefix>lock</mat-icon>
+        <button
+          mat-icon-button
+          matSuffix
+          type="button"
+          (click)="togglePasswordVisibility()"
+          [attr.aria-label]="'Toggle password visibility'"
+          [attr.aria-pressed]="!hidePassword()"
+        >
+          <mat-icon>{{
+            hidePassword() ? "visibility_off" : "visibility"
+          }}</mat-icon>
+        </button>
+        @if (loginForm.get("password")?.hasError("required")) {
+          <mat-error>Informe sua senha</mat-error>
+        }
+        @if (loginForm.get("password")?.hasError("minlength")) {
+          <mat-error>A senha deve ter pelo menos 6 caracteres</mat-error>
+        }
+      </mat-form-field>
+
+      @if (loading()) {
+        <mat-progress-bar mode="indeterminate" />
+      }
+
+      <button
+        mat-flat-button
+        color="primary"
+        type="submit"
+        class="full-width"
+        [disabled]="loading()"
+      >
+        @if (loading()) {
+          <span>Entrando...</span>
+        } @else {
+          <span>Entrar</span>
+        }
+      </button>
+    </form>
+
+    <div class="login-footer">
+      <p>Esqueceu sua senha? <a routerLink="/recuperar-senha">Recuperar</a></p>
+    </div>
+  </mat-card>
+</div>

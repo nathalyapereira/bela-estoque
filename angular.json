@@ -63,7 +63,8 @@
               "buildTarget": "bela-estoque:build:production"
             },
             "development": {
-              "buildTarget": "bela-estoque:build:development"
+              "buildTarget": "bela-estoque:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"
@@ -72,7 +73,7 @@
           "builder": "@angular/build:extract-i18n"
         },
         "test": {
-          "builder": "@angular/build:karma",
+          "builder": "@angular/build:vitest",
           "options": {
             "polyfills": [],
             "tsConfig": "tsconfig.spec.json",
@@ -84,7 +85,8 @@
               }
             ],
             "styles": ["src/styles.scss"],
-            "scripts": []
+            "scripts": [],
+            "configFile": "vitest.config.ts"
           }
         }
       }

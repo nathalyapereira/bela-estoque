@@ -1,0 +1,191 @@
+<!-- ==========================================================================
+  features/produtos/lista/produtos-lista.component.html
+=========================================================================== -->
+
+<div class="page-container">
+
+  <!-- Cabeçalho -->
+  <div class="page-header">
+    <div>
+      <h1>Produtos</h1>
+      <p>{{ total() }} produto(s) cadastrado(s)</p>
+    </div>
+    <button mat-raised-button color="primary" (click)="novoProduto()">
+      <mat-icon>add</mat-icon>
+      Novo produto
+    </button>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filtros-bar">
+    <mat-form-field appearance="outline" class="busca-field">
+      <mat-label>Buscar produto...</mat-label>
+      <mat-icon matPrefix>search</mat-icon>
+      <input
+        matInput
+        [ngModel]="busca()"
+        (ngModelChange)="onBusca($event)"
+        placeholder="Nome, SKU ou código de barras"
+      />
+      @if (busca()) {
+        <button matSuffix mat-icon-button (click)="onBusca('')">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="status-field">
+      <mat-label>Status estoque</mat-label>
+      <mat-select
+        [ngModel]="filtroStatus()"
+        (ngModelChange)="filtroStatus.set($event)"
+      >
+        <mat-option value="">Todos</mat-option>
+        <mat-option value="ok">Normal</mat-option>
+        <mat-option value="baixo">Baixo</mat-option>
+        <mat-option value="zero">Esgotado</mat-option>
+        <mat-option value="excesso">Excesso</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <!-- Loading bar -->
+  @if (carregando()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  <!-- Tabela -->
+  <div class="tabela-wrapper">
+    <table mat-table [dataSource]="produtos()" matSort (matSortChange)="onOrdenacao($event)">
+
+      <!-- Imagem -->
+      <ng-container matColumnDef="imagem">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let p">
+          @if (p.imagemUrl) {
+            <img [src]="p.imagemUrl" [alt]="p.nome" class="produto-thumb" />
+          } @else {
+            <div class="produto-thumb-placeholder">
+              <mat-icon>inventory_2</mat-icon>
+            </div>
+          }
+        </td>
+      </ng-container>
+
+      <!-- Nome -->
+      <ng-container matColumnDef="nome">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Nome</th>
+        <td mat-cell *matCellDef="let p">
+          <div class="produto-nome">{{ p.nome }}</div>
+          <div class="produto-descricao text-ellipsis">{{ p.descricao }}</div>
+        </td>
+      </ng-container>
+
+      <!-- SKU -->
+      <ng-container matColumnDef="sku">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>SKU</th>
+        <td mat-cell *matCellDef="let p">
+          <code class="sku-code">{{ p.sku }}</code>
+        </td>
+      </ng-container>
+
+      <!-- Categoria -->
+      <ng-container matColumnDef="categoria">
+        <th mat-header-cell *matHeaderCellDef>Categoria</th>
+        <td mat-cell *matCellDef="let p">{{ p.categoriaNome }}</td>
+      </ng-container>
+
+      <!-- Quantidade -->
+      <ng-container matColumnDef="quantidade">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="quantidadeAtual">
+          Estoque
+        </th>
+        <td mat-cell *matCellDef="let p">
+          <div class="quantidade-info">
+            <span class="quantidade-valor">{{ p.quantidadeAtual }} {{ p.unidade }}</span>
+            <span class="quantidade-minmax">
+              mín: {{ p.quantidadeMinima }} / máx: {{ p.quantidadeMaxima }}
+            </span>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Preço -->
+      <ng-container matColumnDef="preco">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Preço</th>
+        <td mat-cell *matCellDef="let p" class="preco-cell">
+          {{ formatarPreco(p.preco) }}
+        </td>
+      </ng-container>
+
+      <!-- Status -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let p">
+          <span class="badge-estoque {{ getStatus(p) }}">
+            {{ getLabelStatus(getStatus(p)) }}
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- Ações -->
+      <ng-container matColumnDef="acoes">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let p">
+          <button mat-icon-button [matMenuTriggerFor]="menuAcoes"
+            (click)="$event.stopPropagation()">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+
+          <mat-menu #menuAcoes="matMenu">
+            <button mat-menu-item (click)="verDetalhe(p)">
+              <mat-icon>visibility</mat-icon>
+              <span>Ver detalhe</span>
+            </button>
+            <button mat-menu-item (click)="editar(p)">
+              <mat-icon>edit</mat-icon>
+              <span>Editar</span>
+            </button>
+            <button mat-menu-item (click)="alternarStatus(p)">
+              <mat-icon>{{ p.ativo ? 'toggle_off' : 'toggle_on' }}</mat-icon>
+              <span>{{ p.ativo ? 'Desativar' : 'Ativar' }}</span>
+            </button>
+            <mat-divider />
+            <button mat-menu-item (click)="confirmarExclusao(p)" class="acao-excluir">
+              <mat-icon>delete</mat-icon>
+              <span>Excluir</span>
+            </button>
+          </mat-menu>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="colunas; sticky: true"></tr>
+      <tr mat-row *matRowDef="let p; columns: colunas"
+        class="tabela-row"
+        (click)="verDetalhe(p)">
+      </tr>
+
+      <!-- Estado vazio -->
+      <tr class="mat-mdc-no-data-row" *matNoDataRow>
+        <td [attr.colspan]="colunas.length">
+          <div class="empty-state">
+            <mat-icon>inventory_2</mat-icon>
+            <p>Nenhum produto encontrado</p>
+            <small>Tente ajustar os filtros ou cadastre um novo produto</small>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Paginação -->
+  <mat-paginator
+    [length]="total()"
+    [pageSize]="tamanhoPagina()"
+    [pageIndex]="pagina()"
+    [pageSizeOptions]="[10, 25, 50, 100]"
+    showFirstLastButtons
+    (page)="onPagina($event)"
+  />
+
+</div>

@@ -1,0 +1,251 @@
+// =============================================================================
+// layout/shell/shell.component.scss
+// =============================================================================
+
+// Container principal — ocupa toda a tela
+.shell-container {
+  height: 100vh;
+  display: flex;
+}
+
+// =============================================================================
+// SIDENAV
+// =============================================================================
+
+// Largura controlada pelas variáveis CSS do tema
+:host ::ng-deep .mat-sidenav {
+  width: var(--sidebar-width, 240px);
+  transition: width 280ms cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+// Modo compacto (rail) — só ícones
+:host ::ng-deep .sidenav--compacta {
+  width: 64px !important;
+
+  .brand-nome {
+    display: none;
+  }
+  .nav-item {
+    padding: 0 !important;
+    justify-content: center;
+  }
+}
+
+// Brand / Logo
+.sidenav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  height: var(--topbar-height, 56px);
+
+  .brand-icon {
+    color: var(--primary-400, #818cf8);
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+
+  .brand-nome {
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .brand-texto {
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--text-primary);
+    letter-spacing: 0.01em;
+
+    // Rose Gold: usa Playfair Display com gradiente
+    &--beauty {
+      font-family: "Playfair Display", serif;
+      background: var(--gradient-brand);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+  }
+}
+
+// Navegação
+.sidenav-nav {
+  padding: 8px 0;
+
+  &--secundaria {
+    padding-bottom: 8px;
+  }
+}
+
+// Item de nav
+.nav-item {
+  border-radius: 8px !important;
+  margin: 2px 8px !important;
+  transition:
+    background var(--transition-fast, 150ms ease),
+    color var(--transition-fast, 150ms ease) !important;
+
+  mat-icon {
+    color: var(--text-muted);
+    transition: color var(--transition-fast, 150ms ease);
+  }
+
+  span {
+    color: var(--text-secondary);
+    font-size: 13px;
+    transition: color var(--transition-fast, 150ms ease);
+  }
+
+  &:hover {
+    background: rgba(128, 128, 255, 0.06) !important;
+
+    mat-icon,
+    span {
+      color: var(--text-primary);
+    }
+  }
+
+  // Item ativo
+  &--ativo {
+    background: rgba(128, 128, 255, 0.12) !important;
+    border-left: 3px solid var(--primary-500) !important;
+    border-radius: 0 8px 8px 0 !important;
+    margin-left: 0 !important;
+    padding-left: 13px !important;
+
+    mat-icon {
+      color: var(--primary-400) !important;
+    }
+    span {
+      color: var(--primary-300) !important;
+      font-weight: 500;
+    }
+  }
+}
+
+// Spacer empurra nav secundária para o fundo
+.sidenav-spacer {
+  flex: 1;
+  min-height: 16px;
+}
+
+// =============================================================================
+// TOOLBAR
+// =============================================================================
+
+.toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  .toolbar-titulo {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-left: 8px;
+  }
+
+  .toolbar-spacer {
+    flex: 1;
+  }
+}
+
+// Avatar do usuário na toolbar
+.btn-avatar {
+  overflow: hidden;
+  border-radius: 50% !important;
+  border: 2px solid var(--border-default) !important;
+  transition: border-color var(--transition-fast) !important;
+
+  &:hover {
+    border-color: var(--primary-400) !important;
+  }
+}
+
+.avatar-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.avatar-iniciais {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--primary-900, #312e81);
+  color: var(--primary-300, #a5b4fc);
+  font-size: 12px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+
+  &--menu {
+    width: 40px;
+    height: 40px;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+}
+
+// =============================================================================
+// MENU DO USUÁRIO
+// =============================================================================
+
+:host ::ng-deep .menu-usuario {
+  min-width: 220px;
+
+  .menu-usuario-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+
+  .menu-nome {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin: 0 0 2px;
+  }
+
+  .menu-role {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin: 0;
+    text-transform: capitalize;
+  }
+
+  .btn-logout {
+    color: var(--estoque-zero, #f87171) !important;
+
+    mat-icon {
+      color: var(--estoque-zero, #f87171) !important;
+    }
+  }
+}
+
+// =============================================================================
+// CONTEÚDO PRINCIPAL
+// =============================================================================
+
+.conteudo-principal {
+  flex: 1;
+  overflow-y: auto;
+  min-height: calc(100vh - var(--topbar-height, 56px));
+}
+
+@media (max-width: 768px) {
+  .toolbar-titulo {
+    display: none;
+  }
+
+  :host ::ng-deep .mat-sidenav {
+    width: 280px !important;
+  }
+}
